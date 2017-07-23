@@ -4,7 +4,7 @@ import './App.css';
 
 import getNewListItems from './ListData';
 
-import { InfiniteLoader, List } from 'react-virtualized';
+import { InfiniteLoader, List, AutoSizer } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
 class App extends Component {
@@ -17,7 +17,7 @@ class App extends Component {
     return index <= this.state.list.length;
   }
 
-  loadMoreRows = () => {
+  loadMoreRows = ({ startIndex, stopIndex }) => {
     return Promise.resolve().then(() => {
       this.setState({ list: [...this.state.list, ...getNewListItems()]})
     });
@@ -52,15 +52,19 @@ class App extends Component {
             rowCount={10000}
           >
             {({ onRowsRendered, registerChild }) => (
-              <List
-                height={200}
-                onRowsRendered={onRowsRendered}
-                ref={registerChild}
-                rowCount={10000}
-                rowHeight={20}
-                rowRenderer={this.rowRenderer}
-                width={300}
-              />
+              <AutoSizer>
+                {({ height, width }) => (
+                  <List
+                    height={height}
+                    onRowsRendered={onRowsRendered}
+                    ref={registerChild}
+                    rowCount={10000}
+                    rowHeight={20}
+                    rowRenderer={this.rowRenderer}
+                    width={width}
+                  />
+                )}
+              </AutoSizer>
             )}
           </InfiniteLoader>
         </div>
